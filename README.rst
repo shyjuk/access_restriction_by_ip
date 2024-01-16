@@ -17,4 +17,4 @@ Author
 * Niyas Raphy <odoo@cybrosys.com>
 * V14 Muhammad P <odoo@cybrosys.com>
 * V15 Nikhil Ravi <odoo@cybrosys.com>
-* V15 Shyju Kanaprath <me@shyju.in>
+* V15 Shyju Kanaprath <shyju@epillars.com>
