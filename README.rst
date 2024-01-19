@@ -9,11 +9,6 @@ A new feature has been added that automatically logs out a user who is already l
 
 If no IP is specified for a user, then there will not be restriction by IP. He can access from any IP.
 
-
-Credits
-=======
-Cybrosys Techno Solutions
-
 Author
 ------
 * Niyas Raphy <odoo@cybrosys.com>
