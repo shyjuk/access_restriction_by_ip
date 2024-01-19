@@ -18,5 +18,10 @@
     'images': ['static/description/banner.png'],
     'installable': True,
     'auto_install': False,
+    "assets": {
+        "web.assets_backend": [
+            'access_restriction_by_ip/static/src/js/user_status.js',
+        ],
+    },
 }
 
