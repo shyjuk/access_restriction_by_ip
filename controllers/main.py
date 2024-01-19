@@ -18,14 +18,14 @@ class UserStatusLongpolling(http.Controller):
         if not user_id:
             return {'message': 'Please login', 'user_id': False}
         else:
-            ip_address = request.httprequest.environ['HTTP_X_REAL_IP']
+            user_ip = request.httprequest.environ['HTTP_X_REAL_IP']
             ip_list = []
             if user_id.allowed_ips:
                 ip_list = []
             for rec in user_id.allowed_ips:
                 domain_ip = socket.gethostbyname(rec.ip_address)
                 ip_list.append(domain_ip)
-            if ip_address not in ip_list:
+            if user_ip not in ip_list:
                 request.session.logout(keep_db=True)
                 logging.info("User IP changed. User %r - Session Terminated", user_id.name)
                 return {'status': 'session_closed', 'user_ids': user_id.login}    
