@@ -26,12 +26,8 @@ class UserStatusLongpolling(http.Controller):
                 domain_ip = socket.gethostbyname(rec.ip_address)
                 ip_list.append(domain_ip)
             if ip_address not in ip_list:
-                #return {'--YourIP': ip_address, 'Saved IP': domain_ip}    
-                #user_id.token = False
                 request.session.logout(keep_db=True)
                 logging.info("User IP changed. User %r - Session Terminated", user_id.name)
-                #return redirect('/web/session/logout?redirect=/web')
-                #return redirect("http://www.example.com", code=302)
                 return {'status': 'session_closed', 'user_ids': user_id.login}    
         return {'status': 'ok', 'user_id': user_id.login}
 
@@ -60,7 +56,6 @@ class Home(main.Home):
                 ip_address = request.httprequest.environ['HTTP_X_REAL_IP']
             except:
                 pass
-            #print(ip_address)
             if request.params['login']:
                 user_rec = request.env['res.users'].sudo().search(
                     [('login', '=', request.params['login'])])
