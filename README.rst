@@ -5,6 +5,8 @@ This module will restrict users access to his account from the specified IP / Do
 account from  non-specified IP / Domain, login will be restricted and a warning message will be displayed in
 login page.
 
+A new feature has been added that automatically logs out a user who is already logged in if their IP address changes after login.
+
 If no IP is specified for a user, then there will not be restriction by IP. He can access from any IP.
 
 
