@@ -15,14 +15,15 @@ patch(WebClient.prototype,'access_restriction_by_ip', {
     });
   },
 
+  //Check the user status every 5 minutes
   loopCheck(){
     var self = this;
     setInterval(function() { 
-      self.testfun();
-    }, 60000);
+      self.UserStatusCheck();
+    }, 300000);
   },
 
-  async testfun(){
+  async UserStatusCheck(){
     var self = this;
     await rpc.query({
       route: "/web/user_status",
