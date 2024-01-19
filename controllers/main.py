@@ -8,6 +8,7 @@ from odoo.http import request
 import socket
 import logging
 
+
 # _logger = logging.getLogger(__name__)
 
 class UserStatusLongpolling(http.Controller):
@@ -19,15 +20,14 @@ class UserStatusLongpolling(http.Controller):
         else:
             user_ip = request.httprequest.environ['HTTP_X_REAL_IP']
             ip_list = []
-            if user_id.allowed_ips:
-                ip_list = []
-            for rec in user_id.allowed_ips:
-                domain_ip = socket.gethostbyname(rec.ip_address)
-                ip_list.append(domain_ip)
-            if user_ip not in ip_list:
-                request.session.logout(keep_db=True)
-                logging.info("User IP changed. User %r - Session Terminated", user_id.name)
-                return {'status': 'session_closed', 'user_ids': user_id.login}    
+            if user_id.allowed_ips:    
+                for rec in user_id.allowed_ips:
+                    domain_ip = socket.gethostbyname(rec.ip_address)
+                    ip_list.append(domain_ip)  
+                if user_ip not in ip_list:
+                    request.session.logout(keep_db=True)
+                    logging.info("User IP changed. User %r - Session Terminated", user_id.name)
+                    return {'status': 'session_closed', 'user_ids': user_id.login}    
         return {'status': 'ok', 'user_id': user_id.login}
 
 class Home(main.Home):
@@ -55,6 +55,7 @@ class Home(main.Home):
                 ip_address = request.httprequest.environ['HTTP_X_REAL_IP']
             except:
                 pass
+            #print(ip_address)
             if request.params['login']:
                 user_rec = request.env['res.users'].sudo().search(
                     [('login', '=', request.params['login'])])
@@ -97,4 +98,3 @@ class Home(main.Home):
                             values['error'] = _("Wrong login/password")
 
         return request.render('web.login', values)
-
