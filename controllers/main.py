@@ -7,7 +7,6 @@ from odoo import http
 from odoo.http import request
 import socket
 import logging
-from werkzeug.utils import redirect
 
 # _logger = logging.getLogger(__name__)
 
