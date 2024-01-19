@@ -1,30 +1,39 @@
-# -*- coding: utf-8 -*-
-##############################################################################
-#
-#    Cybrosys Technologies Pvt. Ltd.
-#    Copyright (C) 2020-TODAY Cybrosys Technologies(<https://www.cybrosys.com>).
-#    Author: Niyas Raphy(<https://www.cybrosys.com>)
-#    you can modify it under the terms of the GNU LESSER
-#    GENERAL PUBLIC LICENSE (AGPL v3), Version 3.
-
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU LESSER GENERAL PUBLIC LICENSE (AGPL v3) for more details.
-#
-#    You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
-#    GENERAL PUBLIC LICENSE (AGPL v3) along with this program.
-#    If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
-from odoo.addons.web.controllers import main
-from odoo.http import request
-from odoo.exceptions import Warning
 import odoo
+from odoo.addons.web.controllers import main
+from odoo.exceptions import Warning
 import odoo.modules.registry
 from odoo.tools.translate import _
 from odoo import http
+from odoo.http import request
 import socket
+import logging
+from werkzeug.utils import redirect
+
+# _logger = logging.getLogger(__name__)
+
+class UserStatusLongpolling(http.Controller):
+    @http.route('/web/user_status', type='json', auth='user')
+    def update_status(self, message=None, db=None):
+        user_id = request.env['res.users'].sudo().browse(request.env.user.id)
+        if not user_id:
+            return {'message': 'Please login', 'user_id': False}
+        else:
+            ip_address = request.httprequest.environ['HTTP_X_REAL_IP']
+            ip_list = []
+            if user_id.allowed_ips:
+                ip_list = []
+            for rec in user_id.allowed_ips:
+                domain_ip = socket.gethostbyname(rec.ip_address)
+                ip_list.append(domain_ip)
+            if ip_address not in ip_list:
+                #return {'--YourIP': ip_address, 'Saved IP': domain_ip}    
+                #user_id.token = False
+                request.session.logout(keep_db=True)
+                logging.info("User IP changed. User %r - Session Terminated", user_id.name)
+                #return redirect('/web/session/logout?redirect=/web')
+                #return redirect("http://www.example.com", code=302)
+                return {'status': 'session_closed', 'user_ids': user_id.login}    
+        return {'status': 'ok', 'user_id': user_id.login}
 
 class Home(main.Home):
 
@@ -51,7 +60,7 @@ class Home(main.Home):
                 ip_address = request.httprequest.environ['HTTP_X_REAL_IP']
             except:
                 pass
-            print(ip_address)
+            #print(ip_address)
             if request.params['login']:
                 user_rec = request.env['res.users'].sudo().search(
                     [('login', '=', request.params['login'])])
@@ -94,3 +103,4 @@ class Home(main.Home):
                             values['error'] = _("Wrong login/password")
 
         return request.render('web.login', values)
+
